@@ -1,0 +1,4 @@
+The error you're encountering occurs because Next.js 13+ (with the App Router) treats components as Server Components by default. Server Components cannot include client-side interactivity, such as event handlers (e.g., onClick). To fix this, you need to explicitly mark the component as a Client Component so that it can use client-side features like event handlers.
+
+Solution: Convert the Component to a Client Component
+To make your ClickButton component work, you need to add the "use client" directive at the top of the file. This tells Next.js that the component should be rendered on the client side, where interactivity is allowed.

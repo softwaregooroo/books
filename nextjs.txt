@@ -2,3 +2,15 @@ The error you're encountering occurs because Next.js 13+ (with the App Router) t
 
 Solution: Convert the Component to a Client Component
 To make your ClickButton component work, you need to add the "use client" directive at the top of the file. This tells Next.js that the component should be rendered on the client side, where interactivity is allowed.
+
+Server Components vs Client Components:
+
+Server Components: Rendered on the server and sent as static HTML to the client. They cannot use client-side interactivity like event handlers, useState, useEffect, etc.
+
+Client Components: Rendered on the client side and can use all React features, including interactivity.
+
+When to Use "use client":
+
+Use it for any component that requires interactivity (e.g., buttons, forms, state management, etc.).
+
+Avoid using it for components that don’t need interactivity, as Server Components are more efficient.

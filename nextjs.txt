@@ -14,3 +14,62 @@ When to Use "use client":
 Use it for any component that requires interactivity (e.g., buttons, forms, state management, etc.).
 
 Avoid using it for components that don’t need interactivity, as Server Components are more efficient.
+If you’re using the Pages Router (not the App Router), you don’t need the "use client" directive because all components are treated as Client Components by default.
+
+The "use client" directive is specific to Next.js 13+ with the App Router.
+1. using mongodb module in nextjs 
+The error you're encountering, Module not found: Can't resolve 'net', typically occurs when you're trying to use Node.js-specific modules (like net, fs, http, etc.) in a client-side environment. These modules are not available in the browser, which is why you're seeing this error.
+
+In your case, the issue arises because you're importing mongodb in a client-side component. The mongodb library is designed to run in a Node.js environment, not in the browser. Therefore, you cannot use it directly in a React component that runs on the client side.
+
+Next.js separates client-side (runs in the browser) and server-side (runs on the backend). Database operations should be done server-side.
+
+If using app directory (Next.js 13+ with App Router):
+
+// app/api/connect/route.js
+import { MongoClient } from "mongodb";
+
+export async function GET() {
+  const uri = "your_mongodb_connection_string";
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db("testdb");
+    const collection = db.collection("testcollection");
+    const data = await collection.find({}).toArray();
+    return Response.json(data);
+  } catch (error) {
+    console.error(error);
+    return Response.json({ error: "Database connection failed" }, { status: 500 });
+  } finally {
+    await client.close();
+  }
+}
+
+2️⃣ Fetch Data from the Client (ClickButton.js)
+Now, in your client component, call the API.
+
+"use client";
+import { useState } from "react";
+
+export default function ClickButton() {
+  const [data, setData] = useState(null);
+
+  async function handleClick() {
+    const res = await fetch("/api/connect");
+    const json = await res.json();
+    setData(json);
+  }
+
+  return (
+    <div>
+      <button onClick={handleClick}>Fetch Data</button>
+      <pre>{data ? JSON.stringify(data, null, 2) : "Click the button to fetch data"}</pre>
+    </div>
+  );
+}
+
+MongoDB logic runs on the server (/api/connect.js or /api/connect/route.js).
+Client-side component (ClickButton.js) fetches data from API, avoiding Node.js issues.
+Prevents MongoDB credentials from leaking in the client.
